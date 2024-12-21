@@ -1,0 +1,28 @@
+name : CD
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  my_job:
+    name: deploy to staging
+    runs-on: ubuntu-latest
+
+steps:
+    - uses: actions/checkout@v4
+    - name: deploy make ssh
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.PRIVATE_KEY }}
+        port: 22
+        script: |
+          cd ~/apps/ga-ci-cd
+          git pull origin main
+          git root
+          npm install --only=prod
+          pm2 restart YoutubeApp
+
